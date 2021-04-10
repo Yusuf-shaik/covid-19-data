@@ -1,4 +1,5 @@
 import requests
+from quality import urlExisits, updateFailLog
 
 import pandas as pd
 
@@ -67,7 +68,10 @@ if __name__ == "__main__":
     source = "https://d35p9e4fm9h3wo.cloudfront.net/latestData.json"
     destination = "automations/output/Romania.csv"
 
-    data = read(source)
+    if urlExists(source):
+    	data = read(source)
+    	process_vaccine_data(data.copy()).to_csv(destination, index=False)
+    	process_manufacturer_data(data.copy()).to_csv(destination.replace("output", "output/by_manufacturer"), index=False)
 
-    process_vaccine_data(data.copy()).to_csv(destination, index=False)
-    process_manufacturer_data(data.copy()).to_csv(destination.replace("output", "output/by_manufacturer"), index=False)
+    else:
+    	updateFailLog(source)
